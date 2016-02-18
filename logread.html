@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<script>
+$(document).ready(function(){
+	$.get("http://localhost:30391/logs", function(data, status){
+        if(data!=null) {
+			data.reverse();
+			for(var i=0;i<data.length;i++) {
+				$("#dateRange").append('<option>'+data[i]+'</option>');
+			}
+			$("#dateRange").change();
+		}
+    });
+	
+	$("#dateRange").change(function(){
+		var logDate = $("#dateRange").val();
+	  
+	  $.get("http://localhost:30391/log/"+logDate, function(data, status){
+			if(data!=null) {
+				var lines = data.split('<br/>');
+				lines.reverse();
+				$("#logTable tbody").html("");
+				for (var i=0; i<lines.length; i++) {
+					$("#logTable tbody").append('<tr><td>' + lines[i] + '</td></tr>');
+				}
+			}
+		});
+	});
+});
+
+
+</script>
+<body>
+
+<div class="container">
+  <h2>SmartScan Logger</h2>
+  <form role="form" class="form-inline" id="loggerForm">
+    <div class="form-group">
+      <!--<label for="dateRange">От дата:</label>-->
+      <select class="form-control" id="dateRange">
+      </select>
+    </div>
+  </form>
+  <table class="table table-striped" id="logTable">
+    <thead>
+      <tr>
+        <th>Event</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+</body> 
+</html>
